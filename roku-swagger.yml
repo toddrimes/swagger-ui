@@ -1,0 +1,1528 @@
+---
+  swagger: "2.0"
+  info: 
+    version: "v1"
+    title: "NBCU TVE API"
+    description: |
+      The first version of the TVE API is an exciting step forward towards
+      making it easier for developers to access uniform TVE data. We created it
+      so that you can surface NBCU's amazing content in predictable, but fun and
+      innovative ways.
+      
+      Build something great!
+      
+      All endpoints are only accessible via https and are located at
+      uat-api.nbcuni.com.
+      
+      For instance: you can grab the most popular videos at the moment by 
+      accessing the following URL with your api_key header:
+      
+      ```
+        https://uat-api.nbcuni.com/videos/popular
+      ```
+
+      ## Deleting Objects
+      We do our best to have all our URLs be
+      [RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer).
+      Every endpoint (URL) may support one of four different http verbs. GET
+      requests fetch information about an object, POST requests create objects,
+      PUT requests update objects, and finally DELETE requests will delete
+      objects.
+      Since many old browsers don't support PUT or DELETE, we've made it easy to
+      fake PUTs and DELETEs. All you have to do is do a POST with _method=PUT or
+      _method=DELETE as a parameter and we will treat it as if you used PUT or
+      DELETE respectively.
+      ## Structure
+      ### The Envelope
+      Every response is contained by an envelope. That is, each response has a
+      predictable set of keys with which you can expect to interact:
+      ```json
+      {
+          "meta": {
+              "code": 200
+          },
+          "data": {
+              ...
+          },
+          "pagination": {
+              "next_url": "...",
+              "next_max_id": "13872296"
+          }
+      }
+      ```
+      #### META
+      The meta key is used to communicate extra information about the response to
+      the developer. If all goes well, you'll only ever see a code key with value
+      200.
+      
+      However, sometimes things go wrong, and in that case you might see a
+      response like:
+      ```json
+      {
+          "meta": {
+              "error_type": "Not Found Exception",
+              "code": 404,
+              "error_message": "..."
+          }
+      }
+      ```
+      #### DATA
+      The data key is the meat of the response. It may be a list or dictionary,
+      but either way this is where you'll find the data you requested.
+      #### PAGINATION
+      Sometimes you just can't get enough. For this reason, we've provided a
+      convenient way to access more data in any request for sequential data.
+      Simply call the url in the next_url parameter and we'll respond with the
+      next set of data.
+      ```json
+        {
+            ...
+            "pagination": {
+                "next_url": "https://uat-api.nbcuni.com/content-api/programs?max_id=13872296",
+                "next_max_id": "13872296"
+            }
+        }
+      ```
+      On views where pagination is present, we also support the "count" parameter.
+      Simply set this to the number of items you'd like to receive. Note that the
+      default values should be fine for most applications - but if you decide to
+      increase this number there is a maximum value defined on each endpoint.
+      
+      ### JSONP
+      If you're writing an AJAX application, and you'd like to wrap our response
+      with a callback, all you have to do is specify a callback parameter with
+      any API call:
+      ```
+      https://uat-api.nbcuni.com/videos/recent?&callback=callbackFunction
+      ```
+      Would respond with:
+      ```js
+      callbackFunction({
+          ...
+      });
+      ```
+    termsOfService: http://instagram.com/about/legal/terms/api
+
+################################################################################
+#                  Host, Base Path, Schemes and Content Types                  #
+################################################################################
+  host: uat-api.nbcuni.com
+
+  basePath: /content-api
+  schemes:
+    - https
+  produces:
+    - application/json
+  consumes:
+    - application/json
+
+################################################################################
+#                                   Tags                                       #
+################################################################################
+  tags: 
+    - name: "Apps"
+    - name: "Content"
+  securityDefinitions: 
+    key:
+      type: apiKey
+      in: header
+      name: api_key
+  security:
+    - key: []
+  parameters: 
+    app-id: 
+      name: "app-id"
+      in: "path"
+      description: "The application (e.g. Roku, X-Box, Apple TV) identifier"
+      type: "string"
+    list-id: 
+      name: "list-id"
+      in: "path"
+      description: "The list identifier (non-intelligent)"
+      type: "number"
+    program-id: 
+      name: "program-id"
+      in: "path"
+      description: "The program identifier (e.g. The Voice)"
+      type: "number"
+    video-id: 
+      name: "video-id"
+      in: "path"
+      description: "The video identifier"
+      type: "number"
+  paths: 
+    /apps/: 
+      get: 
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "GET a list of supported App configurations."
+        responses: 
+          200:
+            description: OK
+            schema:
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/definitions/App'
+      post: 
+        parameters:
+          - name: mvpd
+            in: query
+            description: ID of an MVPD
+            type: string
+            required: false
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Create a new app by POSTing its configuration data and optional MVPD."
+        responses: 
+          200: 
+            description: "The App object was created."
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/App"
+                  
+    /apps/{app-id}: 
+      get: 
+        parameters:
+          - name: app-id
+            in: path
+            description: ID of an App
+            type: string
+            required: true
+          - name: mvpd
+            in: query
+            description: ID of an MVPD
+            type: string
+            required: false
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Get configuration 'App' object for the specified app."
+        responses: 
+          200: 
+            description: "The app object"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/App"
+      put: 
+        parameters:
+          - name: app-id
+            in: path
+            description: ID of an App
+            type: string
+            required: true
+          - name: mvpd
+            in: query
+            description: ID of an MVPD
+            type: string
+            required: false
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Update configuration for a given App."
+        responses: 
+          404: 
+            description: "The App object was not found" 
+          200: 
+            description: "The App object was updated"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/App"
+          304: 
+            description: "The App object was unchanged"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/App"
+      delete: 
+        parameters:
+          - name: app-id
+            in: path
+            description: ID of an App
+            type: string
+            required: true
+          - name: mvpd
+            in: query
+            description: ID of an MVPD
+            type: string
+            required: false
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Delete the specified app, with optional MVPD."
+        responses: 
+          200:
+            description: OK
+            schema:
+                type: object
+                properties:
+                  data:
+                    type: integer
+          404: 
+            description: "The app object was not found"
+            
+    /apps/{app-id}/home: 
+      get: 
+        parameters:
+          - name: app-id
+            in: path
+            description: ID of an App
+            type: string
+            required: true
+          - name: mvpd
+            in: query
+            description: ID of an MVPD
+            type: string
+            required: false
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Get global home view for an app (with optional MVPD), including relatively static metadata, layout, and styling markup wrapped around managed or dynamic content."
+        responses: 
+          200: 
+            description: "The app-home object"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/AppHome"
+          404: 
+            description: "Resource not found"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/ErrorResponse"
+      post: 
+        parameters:
+          - name: app-id
+            in: path
+            description: ID of an App
+            type: string
+            required: true
+          - name: mvpd
+            in: query
+            description: ID of an MVPD
+            type: string
+            required: false
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "POST global metadata, layout, and styling markup for an app's [wuth optional mvpd] home view."
+        responses: 
+          200: 
+            description: "The app-home object"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/AppHome"
+          304: 
+            description: "The app-home object was unchanged"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/AppHome"
+                  
+    /apps/{app-id}/shelf: 
+      get: 
+        parameters:
+          - name: app-id
+            in: path
+            description: ID of an App
+            type: string
+            required: true
+          - name: shelf-id
+            in: query
+            description: ID of an App
+            type: string
+            required: false
+          - name: mvpd
+            in: query
+            description: ID of an MVPD
+            type: string
+            required: false
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Get global home for an app."
+        responses: 
+          200: 
+            description: "The app-home object"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/Shelf"
+          404: 
+            description: "Resource not found"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/ErrorResponse"
+      post: 
+        parameters:
+          - name: app-id
+            in: path
+            description: ID of an App
+            type: string
+            required: true
+          - name: shelf-id
+            in: query
+            description: ID of an App
+            type: string
+            required: false
+          - name: mvpd
+            in: query
+            description: ID of an MVPD
+            type: string
+            required: false
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Create or Update a structural shelf (e.g Roku shelf) for an app. Also, the Search shelf"
+        responses: 
+          200: 
+            description: "The shelf object"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/Shelf"
+          304: 
+            description: "The shelf object was unchanged"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/Shelf"
+          404: 
+            description: "Resource not found"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/ErrorResponse"
+              
+    /apps/{app-id}/watchlist/{video-id}: 
+      parameters: 
+        - name: app-id
+          in: path
+          description: ID of app
+          required: true
+          type: string
+        - name: video-id
+          in: path
+          description: ID of suggested video
+          required: true
+          type: string
+        - name: suggested-video-id
+          in: query
+          description: ID of suggested video
+          required: false
+          type: string
+      get: 
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Get user-custom watchlist for an app. The first is the user's most recently incompletely watched video.  The second is the video with the 'suggestion' ID"
+        responses: 
+          200:
+            description: OK
+            schema:
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/definitions/AppVideo'
+          404: 
+            description: "One or more video not found"
+          default: 
+            description: "Error"
+            schema: 
+              $ref: "#/definitions/ErrorResponse"
+              
+    /apps/{app-id}/programs/: 
+      get: 
+        parameters: 
+          - name: app-id
+            in: path
+            description: app ID
+            required: true
+            type: string
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Get an App-specific structure-wrapped list of programs for an app."
+        responses: 
+          200: 
+            description: "Success"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/AppPrograms"
+          404: 
+            description: "App-id or Programs not found"
+          default: 
+            description: "Error"
+            schema: 
+              $ref: "#/definitions/ErrorResponse"
+      post: 
+        parameters: 
+          - name: app-id
+            in: path
+            description: app ID
+            required: true
+            type: string
+          - name: structure
+            in: body
+            description: Array of markup for an app..
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Markup'
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "POST an array of Markup for an Apps Program listings."
+        responses: 
+          200: 
+            description: "Success"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/AppPrograms"
+          404: 
+            description: "App-id not found"
+          default: 
+            description: "Error"
+            schema: 
+              $ref: "#/definitions/ErrorResponse"
+#       put: 
+#         parameters: 
+#           - name: app-id
+#             in: path
+#             description: app ID
+#             required: true
+#             type: string
+#           - name: programs
+#             in: body
+#             description: Create or Update a list of Programs available an app..
+#             schema:
+#               type: array
+#               items:
+#                 $ref: '#/definitions/Program'
+#         security: 
+#           - key: []
+#         tags: 
+#           - "Apps"
+#         description: "PUT a list of programs for an app."
+#         responses: 
+#           200: 
+#             description: "Success"
+#             schema: 
+#               type: "object"
+#               properties: 
+#                 data: 
+#                   $ref: "#/definitions/AppPrograms"
+#           404: 
+#             description: "App-id or Programs not found"
+#           default: 
+#             description: "Error"
+#             schema: 
+#               $ref: "#/definitions/ErrorResponse"
+              
+    /apps/{app-id}/programs/{program-id}: 
+      parameters: 
+        - $ref: "#/parameters/app-id"
+        - $ref: "#/parameters/program-id"
+        - name: "mvpd"
+          in: "query"
+          description: "MVPD by which to filter programs."
+          type: "string"
+          required: false
+      get: 
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Get program structure and content for a program, optionally including mvpd."
+        responses: 
+          200: 
+            description: "The program structured object"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/AppProgram"
+          404: 
+            description: "Key not found"
+          default: 
+            description: "Error"
+            schema: 
+              $ref: "#/definitions/ErrorResponse"
+      post: 
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "POST program structure and content for a program, optionally including mvpd."
+        responses: 
+          200: 
+            description: "The program was updated"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/AppProgram"
+          404: 
+            description: "Key not found"
+          default: 
+            description: "Error"
+            schema: 
+              $ref: "#/definitions/ErrorResponse"
+              
+    /apps/{app-id}/videos/{video-id}: 
+      parameters: 
+        - name: "app-id"
+          in: "path"
+          description: "App ID"
+          type: "string"
+          required: true
+        - name: "video-id"
+          in: "path"
+          description: "Video ID"
+          type: "string"
+          required: true
+        - name: "mvpd"
+          in: "query"
+          description: "Optional MVPD"
+          type: "string"
+          required: false
+      get: 
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "Get a video for an app, optionally altered by MVPD."
+        responses: 
+          200: 
+            description: "The application-specific video object"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/AppVideo"
+          404: 
+            description: "Key not found"
+          default: 
+            description: "Error"
+            schema: 
+              $ref: "#/definitions/ErrorResponse"
+      post: 
+        security: 
+          - key: []
+        tags: 
+          - "Apps"
+        description: "POST structural elements (metadata, markup, styling) for a specific video for an app, optionally altered by MVPD."
+        responses: 
+          200: 
+            description: "The application-specific video object"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  $ref: "#/definitions/AppVideo"
+          404: 
+            description: "Key not found"
+          default: 
+            description: "Error"
+            schema: 
+              $ref: "#/definitions/ErrorResponse"
+    /app/{app-id}/search: 
+      get: 
+        tags: 
+          - "Apps"
+        description: "Returns the initial App-specific search UI WITH results if query parameter q is specified"
+        parameters: 
+          - $ref: "#/parameters/app-id"
+          - name: "q"
+            in: "query"
+            description: "A query string"
+            type: "string"
+            required: true
+          - name: "count"
+            in: "query"
+            description: "Number of users to return."
+            type: "string"
+            required: false
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "object"
+                  items: 
+                    $ref: "#/definitions/AppSearch"
+          404: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/ErrorResponse"
+      post: 
+        tags: 
+          - "Apps"
+        description: "POST structure for Search UI by App ID."
+        parameters: 
+          - $ref: "#/parameters/app-id"
+        responses: 
+          200: 
+            description: "A heterogenous list of matching programs and videos"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "object"
+                  items: 
+                    $ref: "#/definitions/List"
+          404: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/ErrorResponse"
+                    
+    /app/{app-id}/play/{video-id}: 
+      get: 
+        tags: 
+          - "Apps"
+        description: "App-specific play structure wrapping the specified video ."
+        parameters: 
+          - name: "app-id"
+            in: "path"
+            description: "App ID"
+            type: "string"
+            required: true
+          - name: "video-id"
+            in: "path"
+            description: "Video ID"
+            type: "string"
+            required: true
+        responses: 
+          200: 
+            description: "UI or App-wrapped heterogenous list of results"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/AppPlay"
+          404: 
+            description: "Not Found"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/ErrorResponse"
+      post: 
+        tags: 
+          - "Apps"
+        description: "POST App-specific play structure with which to wrap videos ."
+        parameters: 
+          - name: "app-id"
+            in: "path"
+            description: "App ID"
+            type: "string"
+            required: true
+          - name: "video-id"
+            in: "path"
+            description: "Video ID"
+            type: "string"
+            required: true
+        responses: 
+          200: 
+            description: "Successfuly posted play structure"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/Shelf"
+          404: 
+            description: "App or Video Not Found"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/ErrorResponse"
+                    
+    /app/{app-id}/settings/: 
+      get: 
+        tags: 
+          - "Apps"
+        description: "Get App-specific Settings object."
+        parameters: 
+          - $ref: "#/parameters/app-id"
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "object"
+                  items: 
+                    $ref: "#/definitions/AppSettings"
+          404: 
+            description: "Not Found"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/ErrorResponse"
+      post: 
+        tags: 
+          - "Apps"
+        description: "POST App-specific Settings object."
+        parameters: 
+          - $ref: "#/parameters/app-id"
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "object"
+                  items: 
+                    $ref: "#/definitions/AppSettings"
+          404: 
+            description: "Not Found"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/ErrorResponse"
+                    
+    /content/programs/: 
+      get: 
+        tags: 
+          - "Content"
+        description: "GET Paginated list of programs across all brands or 1 brand."
+        parameters: 
+          - name: "brand"
+            in: "query"
+            description: "Brand of items to return."
+            type: "string"
+          - name: "count"
+            in: "query"
+            description: "Count of items to return."
+            type: "integer"
+          - name: "max_id"
+            in: "query"
+            description: "Return media earlier than this max_id.s"
+            type: "integer"
+          - name: "min_id"
+            in: "query"
+            description: "Return media later than this min_id."
+            type: "integer"
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/Program"
+      post: 
+        tags: 
+          - "Content"
+        description: "POST on or more programs to the Content Warehouse."
+        parameters:
+          - name: programs
+            in: body
+            description: One of follow/unfollow/block/unblock/approve/ignore.
+            schema:
+              type: array
+              items:
+                $ref:  "#/definitions/Program"
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/Program"
+                    
+    /content/videos/: 
+      get: 
+        tags: 
+          - "Content"
+        description: "Paginated list of videos content across all brands or 1 brand."
+        parameters: 
+          - name: "brand_id"
+            in: "query"
+            description: "Brand of items to return."
+            type: "string"
+          - name: "count"
+            in: "query"
+            description: "Count of items to return."
+            type: "integer"
+          - name: "max_id"
+            in: "query"
+            description: "Return media earlier than this max_id.s"
+            type: "integer"
+          - name: "min_id"
+            in: "query"
+            description: "Return media later than this min_id."
+            type: "integer"
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/Video"
+      post: 
+        tags: 
+          - "Content"
+        description: "POST one or more videos to the Content Warehouse."
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/Video"
+                    
+    /content/videos/{video-id}: 
+      get: 
+        tags: 
+          - "Content"
+        description: "Unbranded video data for the specified video."
+        parameters: 
+          - 
+            $ref: "#/parameters/video-id"
+          - 
+            name: "brand_id"
+            in: "query"
+            description: "Brand of items to return."
+            type: "string"
+          - 
+            name: "count"
+            in: "query"
+            description: "Count of items to return."
+            type: "integer"
+          - 
+            name: "max_id"
+            in: "query"
+            description: "Return media earlier than this max_id.s"
+            type: "integer"
+          - 
+            name: "min_id"
+            in: "query"
+            description: "Return media later than this min_id."
+            type: "integer"
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/Video"
+      post:
+        tags: 
+          - "Content"
+        description: "POST to create/update content for the specified video."
+        parameters: 
+          - name: "video-id"
+            in: "path"
+            description: "MPX ID of video to create or update."
+            type: "string"
+          - name: "list-id"
+            in: "query"
+            description: "Brand of items to return."
+            type: "string"
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/Video"
+                    
+    /content/lists/: 
+      get: 
+        tags: 
+          - "Content"
+        description: "Paginated list of Lists, optionally limited by brand."
+        parameters: 
+          - name: "brand"
+            in: "query"
+            description: "Brand of items to return."
+            type: "string"
+            required: false
+          - name: "count"
+            in: "query"
+            description: "Count of items to return."
+            type: "integer"
+            required: false
+          - name: "max_id"
+            in: "query"
+            description: "Return media earlier than this max_id.s"
+            type: "integer"
+            required: false
+          - name: "min_id"
+            in: "query"
+            description: "Return media later than this min_id."
+            type: "integer"
+            required: false
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/List"
+      post: 
+        tags: 
+          - "Content"
+        description: "POST (create) a new list of videos or programs."
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/List"
+                    
+    /content/lists/{list-id}: 
+      get: 
+        tags: 
+          - "Content"
+        description: "1 paginated list of content items, optionally limited by brand."
+        parameters: 
+          - $ref: "#/parameters/list-id"
+          - name: "brand"
+            in: "query"
+            description: "Brand of items to return."
+            type: "string"
+            required: false
+          - name: "count"
+            in: "query"
+            description: "Count of items to return."
+            type: "integer"
+            required: false
+          - name: "max_id"
+            in: "query"
+            description: "Return media earlier than this max_id.s"
+            type: "integer"
+            required: false
+          - name: "min_id"
+            in: "query"
+            description: "Return media later than this min_id."
+            type: "integer"
+            required: false
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/List"
+      post: 
+        tags: 
+          - "Content"
+        description: "Update the specified list of content items"
+        parameters:
+          - name: "list-id"
+            in: "path"
+            description: "Brand of items to return."
+            type: "string"
+            required: true
+        responses: 
+          200: 
+            description: "OK"
+            schema: 
+              type: "object"
+              properties: 
+                data: 
+                  type: "array"
+                  items: 
+                    $ref: "#/definitions/List"
+  definitions: 
+    Image: 
+      type: "object"
+      properties: 
+        created_time: 
+          description: "Epoc time (ms)"
+          type: "integer"
+        type: 
+          type: "string"
+        filter: 
+          type: "string"
+        id: 
+          type: "integer"
+        images: 
+          properties: 
+            low_resolution: 
+              $ref: "#/definitions/Image"
+            thumbnail: 
+              $ref: "#/definitions/Image"
+            standard_resolution: 
+              $ref: "#/definitions/Image"
+        videos: 
+          properties: 
+            low_resolution: 
+              $ref: "#/definitions/Image"
+            standard_resolution: 
+              $ref: "#/definitions/Image"
+    Program: 
+      type: "object"
+      properties: 
+        created_time: 
+          description: "Epoc time (ms)"
+          type: "integer"
+        type: 
+          type: "string"
+        filter: 
+          type: "string"
+        id: 
+          type: "integer"
+        images: 
+          properties: 
+            low_resolution: 
+              $ref: "#/definitions/Image"
+            thumbnail: 
+              $ref: "#/definitions/Image"
+            standard_resolution: 
+              $ref: "#/definitions/Image"
+        videos: 
+          properties: 
+            low_resolution: 
+              $ref: "#/definitions/Image"
+            standard_resolution: 
+              $ref: "#/definitions/Image"
+    Watchlist: 
+      type: "object"
+      properties:
+        page: 
+          $ref: "#/definitions/Page"
+        programs:
+          type: "array"
+          items:
+            $ref: "#/definitions/Program"
+        videos:
+          type: "array"
+          items:
+            $ref: "#/definitions/Video"
+        tiles:
+          type: "array"
+          items:
+            $ref: "#/definitions/Tile"
+    App: 
+      type: "object"
+      properties: 
+        id: 
+          type: "string"
+        background_color: 
+          type: "string"
+        font_package: 
+          type: "object"
+        name: 
+          type: "string"
+        version: 
+          type: "string"
+        url: 
+          type: "string"
+        endpoints: 
+          type: "array"
+          items:
+            type: "object"
+            properties: 
+              key:  
+                type: "string"
+              value:  
+                type: "string"
+        configuration: 
+          type: "array"
+          items:
+            type: "object"
+            properties: 
+              key:  
+                type: "string"
+              value:  
+                type: object
+        pages: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Page"
+    AppHome: 
+      type: "object"
+      properties: 
+        page: 
+          $ref: "#/definitions/Page"
+        watchlist: 
+            $ref: "#/definitions/Watchlist"
+    AppPrograms: 
+      type: "object"
+      properties: 
+        page: 
+          $ref: "#/definitions/Page"
+        categories: 
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              category_id:
+                type: "string"
+              button_id:
+                type: "string"
+              programs:
+                type: "array"
+                items:
+                  $ref: "#/definitions/Program"
+        shelves:
+          type: "array"
+          items:
+            $ref: "#/definitions/Shelf"
+          
+    AppProgram: 
+      type: "object"
+      properties: 
+        app_id: 
+          type: "string"
+        program_id: 
+          type: "string"
+        title: 
+          type: "string"
+        mvpd_id: 
+          type: "string"
+        page: 
+          $ref: "#/definitions/Page"
+        program: 
+          $ref: "#/definitions/Program"
+        header: 
+          type: "string"
+        flags:
+          type: "array"
+          items:
+            $ref: "#/definitions/Rule"
+        shelves: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Shelf"
+          
+    AppPlay: 
+      type: "object"
+      properties: 
+        app_id: 
+          type: "string"
+        title: 
+          type: "string"
+        mvpd_id: 
+          type: "string"
+        page: 
+          $ref: "#/definitions/Page"
+        program: 
+          $ref: "#/definitions/Program"
+        video: 
+          $ref: "#/definitions/Video"
+        header: 
+          type: "string"
+        flags:
+          type: "array"
+          items:
+            $ref: "#/definitions/Rule"
+        shelves: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Shelf"
+          
+    AppVideo: 
+      type: "object"
+      properties: 
+        app_id: 
+          type: "string"
+        title: 
+          type: "string"
+        mvpd_id: 
+          type: "string"
+        page: 
+          $ref: "#/definitions/Page"
+        program: 
+          $ref: "#/definitions/Program"
+        video: 
+          $ref: "#/definitions/Video"
+        next: 
+          $ref: "#/definitions/Video"
+        suggestions: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Video"
+        episodes: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Video"
+        header: 
+          type: "string"
+        flags:
+          type: "array"
+          items:
+            $ref: "#/definitions/Rule"
+        tray: 
+          $ref: "#/definitions/Shelf"
+            
+    AppSearch: 
+      type: "object"
+      properties: 
+        page: 
+          $ref: "#/definitions/Page"
+        shelves: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Shelf"
+        programs: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Program"
+        videos: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Video"
+            
+    ErrorResponse: 
+      required: 
+        - "message"
+      properties: 
+        message: 
+          type: "string"
+    List: 
+      type: "object"
+      properties: 
+        user_name: 
+          type: "string"
+        first_name: 
+          type: "string"
+        last_name: 
+          type: "string"
+        type: 
+          type: "string"
+        id: 
+          type: "string"
+    Page: 
+      type: "object"
+      properties: 
+        id: 
+          type: "string"
+        title: 
+          type: "string"
+        leading: 
+          type: "string"
+        header: 
+          type: "string"
+        metadata: 
+          type: "array"
+          items: 
+            type: "object"
+        elements: 
+          type: "array"
+          items: 
+            type: "object"
+        shelves: 
+        # in display order
+          type: "array"
+          items:
+            $ref: "#/definitions/Shelf"
+    AppSettings: 
+      type: "object"
+      properties: 
+        page: 
+          $ref: "#/definitions/Page"
+        sub_pages: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Page"
+        key:  
+          type: "string"
+        value:  
+          type: "string"
+        rules: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Rule"
+    Tile: 
+      type: "object"
+      properties: 
+        id: 
+          type: "string"
+        image_url: 
+          type: "string"
+        action_url: 
+          type: "string"
+    Button: 
+      type: "object"
+      properties: 
+        id: 
+          type: "string"
+        text: 
+          type: "string"
+        image_url: 
+          type: "string"
+    Shelf: 
+      type: "object"
+      properties: 
+        id: 
+          type: "string"
+        title: 
+          type: "string"
+        metadata: 
+          type: "array"
+          items:
+            type: "object"
+        tiles: 
+          type: "array"
+          items: 
+            $ref: "#/definitions/Tile"
+        buttons: 
+          type: "array"
+          items: 
+            $ref: "#/definitions/Button"
+        size: 
+          type: "object"
+          properties:
+            width: 
+              type: "integer"
+            height: 
+              type: "integer"
+        leading: 
+          type: "string"
+        flags:
+          type: "array"
+          items:
+            $ref: "#/definitions/Rule"
+        item_count: 
+          type: integer
+        rules: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Rule"
+    Markup: 
+      type: "object"
+      properties: 
+        key:  
+          type: "string"
+        value:  
+          type: "string"
+        markup: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Markup"
+    Rule: 
+      type: "object"
+      properties: 
+        key:  
+          type: "string"
+        value:  
+          type: "string"
+        rules: 
+          type: "array"
+          items:
+            $ref: "#/definitions/Rule"
+    Video: 
+      type: "object"
+      properties: 
+        created_time: 
+          description: "Epoc time (ms)"
+          type: "integer"
+        type: 
+          type: "string"
+        filter: 
+          type: "string"
+        id: 
+          type: "integer"
+        images: 
+          properties: 
+            low_resolution: 
+              $ref: "#/definitions/Image"
+            thumbnail: 
+              $ref: "#/definitions/Image"
+            standard_resolution: 
+              $ref: "#/definitions/Image"
+        videos: 
+          properties: 
+            low_resolution: 
+              $ref: "#/definitions/Image"
+            standard_resolution: 
+              $ref: "#/definitions/Image"
