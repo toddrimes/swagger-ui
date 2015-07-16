@@ -2,12 +2,12 @@
     "swagger": "2.0",
     "info": {
         "version": "v1",
-        "title": "Roku API",
-        "description": "## Deleting Objects\nWe do our best to have all our URLs be\n[RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer).\nEvery endpoint (URL) may support one of four different http verbs. GET\nrequests fetch information about an object, POST requests create objects,\nPUT requests update objects, and finally DELETE requests will delete\nobjects.\n\nSince many old browsers don't support PUT or DELETE, we've made it easy to\nfake PUTs and DELETEs. All you have to do is do a POST with _method=PUT or\n_method=DELETE as a parameter and we will treat it as if you used PUT or\nDELETE respectively.\n\n## Structure\n\n### The Envelope\nEvery response is contained by an envelope. That is, each response has a\npredictable set of keys with which you can expect to interact:\n```json\n{\n    \"meta\": {\n        \"code\": 200\n    },\n    \"data\": {\n        ...\n    },\n    \"pagination\": {\n        \"next_url\": \"...\",\n        \"next_max_id\": \"13872296\"\n    }\n}\n```\n\n#### META\nThe meta key is used to communicate extra information about the response to\nthe developer. If all goes well, you'll only ever see a code key with value\n200. However, sometimes things go wrong, and in that case you might see a\nresponse like:\n```json\n{\n    \"meta\": {\n        \"error_type\": \"NotFoundException\",\n        \"code\": 404,\n        \"error_message\": \"...\"\n    }\n}\n```\n\n#### DATA\nThe data key is the meat of the response. It may be a list or dictionary,\nbut either way this is where you'll find the data you requested.\n#### PAGINATION\nSometimes you just can't get enough. For this reason, we've provided a\nconvenient way to access more data in any request for sequential data.\nSimply call the url in the next_url parameter and we'll respond with the\nnext set of data.\n```json\n{\n    ...\n    \"pagination\": {\n        \"next_url\": \"https://uat-api.nbcuni.com/content-api/programs?max_id=13872296\",\n        \"next_max_id\": \"13872296\"\n    }\n}\n```\nOn views where pagination is present, we also support the \"count\" parameter.\nSimply set this to the number of items you'd like to receive. Note that the\ndefault values should be fine for most applications - but if you decide to\nincrease this number there is a maximum value defined on each endpoint.\n\n### JSONP\nIf you're writing an AJAX application, and you'd like to wrap our response\nwith a callback, all you have to do is specify a callback parameter with\nany API call:\n```\nhttps://uat-api.nbcuni.com/content-api/programs?max_id=13872296&callback=callbackFunction\n```\nWould respond with:\n```js\ncallbackFunction({\n    ...\n});\n```\n",
-        "termsOfService": "http://api.nbcuni.com/about/legal/terms/api"
+        "title": "NBCU TVE API",
+        "description": "The first version of the TVE API is an exciting step forward towards\nmaking it easier for developers to access uniform TVE data. We created it\nso that you can surface NBCU's amazing content in predictable, but fun and\ninnovative ways.\n\nBuild something great!\n\nAll endpoints are only accessible via https and are located at\nuat-api.nbcuni.com.\n\nFor instance: you can grab the most popular videos at the moment by \naccessing the following URL with your api_key header:\n\n```\n  https://uat-api.nbcuni.com/videos/popular\n```\n\n## Deleting Objects\nWe do our best to have all our URLs be\n[RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer).\nEvery endpoint (URL) may support one of four different http verbs. GET\nrequests fetch information about an object, POST requests create objects,\nPUT requests update objects, and finally DELETE requests will delete\nobjects.\nSince many old browsers don't support PUT or DELETE, we've made it easy to\nfake PUTs and DELETEs. All you have to do is do a POST with _method=PUT or\n_method=DELETE as a parameter and we will treat it as if you used PUT or\nDELETE respectively.\n## Structure\n### The Envelope\nEvery response is contained by an envelope. That is, each response has a\npredictable set of keys with which you can expect to interact:\n```json\n{\n    \"meta\": {\n        \"code\": 200\n    },\n    \"data\": {\n        ...\n    },\n    \"pagination\": {\n        \"next_url\": \"...\",\n        \"next_max_id\": \"13872296\"\n    }\n}\n```\n#### META\nThe meta key is used to communicate extra information about the response to\nthe developer. If all goes well, you'll only ever see a code key with value\n200.\n\nHowever, sometimes things go wrong, and in that case you might see a\nresponse like:\n```json\n{\n    \"meta\": {\n        \"error_type\": \"Not Found Exception\",\n        \"code\": 404,\n        \"error_message\": \"...\"\n    }\n}\n```\n#### DATA\nThe data key is the meat of the response. It may be a list or dictionary,\nbut either way this is where you'll find the data you requested.\n#### PAGINATION\nSometimes you just can't get enough. For this reason, we've provided a\nconvenient way to access more data in any request for sequential data.\nSimply call the url in the next_url parameter and we'll respond with the\nnext set of data.\n```json\n  {\n      ...\n      \"pagination\": {\n          \"next_url\": \"https://uat-api.nbcuni.com/content-api/programs?max_id=13872296\",\n          \"next_max_id\": \"13872296\"\n      }\n  }\n```\nOn views where pagination is present, we also support the \"count\" parameter.\nSimply set this to the number of items you'd like to receive. Note that the\ndefault values should be fine for most applications - but if you decide to\nincrease this number there is a maximum value defined on each endpoint.\n\n### JSONP\nIf you're writing an AJAX application, and you'd like to wrap our response\nwith a callback, all you have to do is specify a callback parameter with\nany API call:\n```\nhttps://uat-api.nbcuni.com/videos/recent?&callback=callbackFunction\n```\nWould respond with:\n```js\ncallbackFunction({\n    ...\n});\n```\n",
+        "termsOfService": "http://instagram.com/about/legal/terms/api"
     },
-    "host": "api.nbcuni.com",
-    "basePath": "/",
+    "host": "uat-api.nbcuni.com",
+    "basePath": "/content-api",
     "schemes": [
         "https"
     ],
@@ -19,30 +19,10 @@
     ],
     "tags": [
         {
-            "name": "Users"
+            "name": "Apps"
         },
         {
-            "name": "Relationships",
-            "description": "Relationships are expressed using the following terms:\n\n**outgoing_status**: Your relationship to the user. Can be \"follows\",\n  \"requested\", \"none\".\n**incoming_status**: A user's relationship to you. Can be \"followed_by\",\n  \"requested_by\", \"blocked_by_you\", \"none\".\n"
-        },
-        {
-            "name": "Media",
-            "description": "At this time, uploading via the API is not possible. We made a conscious\nchoice not to add this for the following reasons:\n\n* Instagram is about your life on the go – we hope to encourage photos\n  from within the app.\n* We want to fight spam & low quality photos. Once we allow uploading\n  from other sources, it's harder to control what comes into the Instagram\n  ecosystem. All this being said, we're working on ways to ensure users\n  have a consistent and high-quality experience on our platform.\n"
-        },
-        {
-            "name": "Commnts"
-        },
-        {
-            "name": "Likes"
-        },
-        {
-            "name": "Tags"
-        },
-        {
-            "name": "Location"
-        },
-        {
-            "name": "Subscribtions"
+            "name": "Content"
         }
     ],
     "securityDefinitions": {
@@ -64,18 +44,6 @@
             "description": "The application (e.g. Roku, X-Box, Apple TV) identifier",
             "type": "string"
         },
-        "brand-id": {
-            "name": "brand-id",
-            "in": "query",
-            "description": "The brand identifier (e.g. NBCD, SYFY, USAD)",
-            "type": "string"
-        },
-        "episode-id": {
-            "name": "episode-id",
-            "in": "path",
-            "description": "The episode identifier (non-intelligent)",
-            "type": "number"
-        },
         "list-id": {
             "name": "list-id",
             "in": "path",
@@ -86,18 +54,6 @@
             "name": "program-id",
             "in": "path",
             "description": "The program identifier (e.g. The Voice)",
-            "type": "number"
-        },
-        "shelf-id": {
-            "name": "shelf-id",
-            "in": "path",
-            "description": "The identifier for any global shelf (e.g. featured, new, popular)",
-            "type": "string"
-        },
-        "user-id": {
-            "name": "user-id",
-            "in": "path",
-            "description": "The user identifier",
             "type": "number"
         },
         "video-id": {
@@ -118,29 +74,33 @@
                 "tags": [
                     "Apps"
                 ],
-                "description": "Get a list of supported apps.",
+                "description": "GET a list of supported App configurations.",
                 "responses": {
                     "200": {
-                        "description": "The application list",
+                        "description": "OK",
                         "schema": {
-                            "type": "object",
                             "properties": {
                                 "data": {
-                                    "$ref": "#/definitions/List"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/App"
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-        },
-        "/apps/{app-id}": {
-            "parameters": [
-                {
-                    "$ref": "#/parameters/app-id"
-                }
-            ],
-            "get": {
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "name": "mvpd",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
                 "security": [
                     {
                         "key": []
@@ -149,7 +109,49 @@
                 "tags": [
                     "Apps"
                 ],
-                "description": "Get basic information about an app.",
+                "description": "Create a new app by POSTing its configuration data and optional MVPD.",
+                "responses": {
+                    "200": {
+                        "description": "The App object was created.",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/App"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "mvpd",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get configuration 'App' object for the specified app.",
                 "responses": {
                     "200": {
                         "description": "The app object",
@@ -163,15 +165,24 @@
                         }
                     }
                 }
-            }
-        },
-        "/apps/{app-id}/homepage": {
-            "parameters": [
-                {
-                    "$ref": "#/parameters/app-id"
-                }
-            ],
-            "get": {
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "mvpd",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
                 "security": [
                     {
                         "key": []
@@ -180,15 +191,294 @@
                 "tags": [
                     "Apps"
                 ],
-                "description": "Get global homepage for an app.",
+                "description": "Update configuration for a given App.",
                 "responses": {
                     "200": {
-                        "description": "The app-homepage object",
+                        "description": "The App object was updated",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "data": {
-                                    "$ref": "#/definitions/AppHomepage"
+                                    "$ref": "#/definitions/App"
+                                }
+                            }
+                        }
+                    },
+                    "304": {
+                        "description": "The App object was unchanged",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/App"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The App object was not found"
+                    }
+                }
+            },
+            "delete": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "mvpd",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Delete the specified app, with optional MVPD.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The app object was not found"
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/home": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "mvpd",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get global home view for an app (with optional MVPD), including relatively static metadata, layout, and styling markup wrapped around managed or dynamic content.",
+                "responses": {
+                    "200": {
+                        "description": "The app-home object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppHome"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "mvpd",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "POST global metadata, layout, and styling markup for an app's [wuth optional mvpd] home view.",
+                "responses": {
+                    "200": {
+                        "description": "The app-home object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppHome"
+                                }
+                            }
+                        }
+                    },
+                    "304": {
+                        "description": "The app-home object was unchanged",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppHome"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/shelf": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "shelf-id",
+                        "in": "query",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "mvpd",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get global home for an app.",
+                "responses": {
+                    "200": {
+                        "description": "The app-home object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/Shelf"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "shelf-id",
+                        "in": "query",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "mvpd",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Create or Update a structural shelf (e.g Roku shelf) for an app. Also, the Search shelf",
+                "responses": {
+                    "200": {
+                        "description": "The shelf object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/Shelf"
+                                }
+                            }
+                        }
+                    },
+                    "304": {
+                        "description": "The shelf object was unchanged",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/Shelf"
                                 }
                             }
                         }
@@ -207,13 +497,28 @@
                 }
             }
         },
-        "/apps/{app-id}/shelf/{shelf-id}": {
+        "/apps/{app-id}/watchlist/{video-id}": {
             "parameters": [
                 {
-                    "$ref": "#/parameters/app-id"
+                    "name": "app-id",
+                    "in": "path",
+                    "description": "ID of app",
+                    "required": true,
+                    "type": "string"
                 },
                 {
-                    "$ref": "#/parameters/shelf-id"
+                    "name": "video-id",
+                    "in": "path",
+                    "description": "ID of suggested video",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "name": "suggested-video-id",
+                    "in": "query",
+                    "description": "ID of suggested video",
+                    "required": false,
+                    "type": "string"
                 }
             ],
             "get": {
@@ -225,64 +530,23 @@
                 "tags": [
                     "Apps"
                 ],
-                "description": "Get global homepage for an app.",
+                "description": "Get user-custom watchlist for an app. The first is the user's most recently incompletely watched video.  The second is the video with the 'suggestion' ID",
                 "responses": {
                     "200": {
-                        "description": "The app-homepage object",
+                        "description": "OK",
                         "schema": {
-                            "type": "object",
                             "properties": {
                                 "data": {
-                                    "$ref": "#/definitions/Shelf"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/AppVideo"
+                                    }
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "Key not found"
-                    },
-                    "default": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/watchlist/[{episode-id}]": {
-            "parameters": [
-                {
-                    "$ref": "#/parameters/app-id"
-                },
-                {
-                    "$ref": "#/parameters/episode-id"
-                }
-            ],
-            "get": {
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get global homepage for an app.",
-                "responses": {
-                    "200": {
-                        "description": "The app-homepage object",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppHomepage"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Key not found"
+                        "description": "One or more video not found"
                     },
                     "default": {
                         "description": "Error",
@@ -294,15 +558,16 @@
             }
         },
         "/apps/{app-id}/programs/": {
-            "parameters": [
-                {
-                    "$ref": "#/parameters/app-id"
-                },
-                {
-                    "$ref": "#/parameters/brand-id"
-                }
-            ],
             "get": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "app ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "security": [
                     {
                         "key": []
@@ -311,21 +576,74 @@
                 "tags": [
                     "Apps"
                 ],
-                "description": "Get a list of programs for an app, optionally limited by brand.",
+                "description": "Get an App-specific structure-wrapped list of programs for an app.",
                 "responses": {
                     "200": {
-                        "description": "The app-homepage object",
+                        "description": "Success",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "data": {
-                                    "$ref": "#/definitions/AppHomepage"
+                                    "$ref": "#/definitions/AppPrograms"
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "Key not found"
+                        "description": "App-id or Programs not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "app ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "structure",
+                        "in": "body",
+                        "description": "Array of markup for an app..",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Markup"
+                            }
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "POST an array of Markup for an Apps Program listings.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppPrograms"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "App-id not found"
                     },
                     "default": {
                         "description": "Error",
@@ -345,10 +663,11 @@
                     "$ref": "#/parameters/program-id"
                 },
                 {
-                    "name": "brand_id",
+                    "name": "mvpd",
                     "in": "query",
-                    "description": "Brand of programs to return.",
-                    "type": "string"
+                    "description": "MVPD by which to filter programs.",
+                    "type": "string",
+                    "required": false
                 }
             ],
             "get": {
@@ -360,15 +679,48 @@
                 "tags": [
                     "Apps"
                 ],
-                "description": "Get a program info for 1 program in 1 app, optionally limited by brand.",
+                "description": "Get program structure and content for a program, optionally including mvpd.",
                 "responses": {
                     "200": {
-                        "description": "The app-homepage object",
+                        "description": "The program structured object",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "data": {
-                                    "$ref": "#/definitions/AppHomepage"
+                                    "$ref": "#/definitions/AppProgram"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "POST program structure and content for a program, optionally including mvpd.",
+                "responses": {
+                    "200": {
+                        "description": "The program was updated",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppProgram"
                                 }
                             }
                         }
@@ -385,19 +737,28 @@
                 }
             }
         },
-        "/apps/{app-id}/episodes/{episode-id}": {
+        "/apps/{app-id}/videos/{video-id}": {
             "parameters": [
                 {
-                    "$ref": "#/parameters/app-id"
+                    "name": "app-id",
+                    "in": "path",
+                    "description": "App ID",
+                    "type": "string",
+                    "required": true
                 },
                 {
-                    "$ref": "#/parameters/episode-id"
+                    "name": "video-id",
+                    "in": "path",
+                    "description": "Video ID",
+                    "type": "string",
+                    "required": true
                 },
                 {
-                    "name": "brand_id",
+                    "name": "mvpd",
                     "in": "query",
-                    "description": "Brand of programs to return.",
-                    "type": "string"
+                    "description": "Optional MVPD",
+                    "type": "string",
+                    "required": false
                 }
             ],
             "get": {
@@ -409,15 +770,48 @@
                 "tags": [
                     "Apps"
                 ],
-                "description": "Get an episode for an app, optionally limited by brand.",
+                "description": "Get a video for an app, optionally altered by MVPD.",
                 "responses": {
                     "200": {
-                        "description": "The app-homepage object",
+                        "description": "The application-specific video object",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "data": {
-                                    "$ref": "#/definitions/Episode"
+                                    "$ref": "#/definitions/AppVideo"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "POST structural elements (metadata, markup, styling) for a specific video for an app, optionally altered by MVPD.",
+                "responses": {
+                    "200": {
+                        "description": "The application-specific video object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppVideo"
                                 }
                             }
                         }
@@ -437,9 +831,9 @@
         "/app/{app-id}/search": {
             "get": {
                 "tags": [
-                    "App"
+                    "Apps"
                 ],
-                "description": "Search for content by query.",
+                "description": "Returns the initial App-specific search UI WITH results if query parameter q is specified",
                 "parameters": [
                     {
                         "$ref": "#/parameters/app-id"
@@ -468,6 +862,47 @@
                                 "data": {
                                     "type": "object",
                                     "items": {
+                                        "$ref": "#/definitions/AppSearch"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ErrorResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Apps"
+                ],
+                "description": "POST structure for Search UI by App ID.",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/app-id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A heterogenous list of matching programs and videos",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "object",
+                                    "items": {
                                         "$ref": "#/definitions/List"
                                     }
                                 }
@@ -491,30 +926,38 @@
                 }
             }
         },
-        "/app/{app-id}/play/{episode-id}": {
+        "/app/{app-id}/play/{video-id}": {
             "get": {
                 "tags": [
-                    "App"
+                    "Apps"
                 ],
-                "description": "App-specific play object wrapping the specified episode .",
+                "description": "App-specific play structure wrapping the specified video .",
                 "parameters": [
                     {
-                        "$ref": "#/parameters/app-id"
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "App ID",
+                        "type": "string",
+                        "required": true
                     },
                     {
-                        "$ref": "#/parameters/episode-id"
+                        "name": "video-id",
+                        "in": "path",
+                        "description": "Video ID",
+                        "type": "string",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "UI or App-wrapped heterogenous list of results",
                         "schema": {
                             "type": "object",
                             "properties": {
                                 "data": {
-                                    "type": "object",
+                                    "type": "array",
                                     "items": {
-                                        "$ref": "#/definitions/List"
+                                        "$ref": "#/definitions/AppPlay"
                                     }
                                 }
                             }
@@ -535,20 +978,69 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Apps"
+                ],
+                "description": "POST App-specific play structure with which to wrap videos .",
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "App ID",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "video-id",
+                        "in": "path",
+                        "description": "Video ID",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfuly posted play structure",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Shelf"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "App or Video Not Found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ErrorResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
-        "/app/{app-id}/settings/{user-id}": {
+        "/app/{app-id}/settings/": {
             "get": {
                 "tags": [
-                    "App"
+                    "Apps"
                 ],
-                "description": "App-specific Settings object for the specified User .",
+                "description": "Get App-specific Settings object.",
                 "parameters": [
                     {
                         "$ref": "#/parameters/app-id"
-                    },
-                    {
-                        "$ref": "#/parameters/user-id"
                     }
                 ],
                 "responses": {
@@ -560,7 +1052,48 @@
                                 "data": {
                                     "type": "object",
                                     "items": {
-                                        "$ref": "#/definitions/Settings"
+                                        "$ref": "#/definitions/AppSettings"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ErrorResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Apps"
+                ],
+                "description": "POST App-specific Settings object.",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/app-id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "object",
+                                    "items": {
+                                        "$ref": "#/definitions/AppSettings"
                                     }
                                 }
                             }
@@ -588,7 +1121,7 @@
                 "tags": [
                     "Content"
                 ],
-                "description": "Paginated list of programs across all brands or 1 brand.",
+                "description": "GET Paginated list of programs across all brands or 1 brand.",
                 "parameters": [
                     {
                         "name": "brand",
@@ -613,6 +1146,41 @@
                         "in": "query",
                         "description": "Return media later than this min_id.",
                         "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Program"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "POST on or more programs to the Content Warehouse.",
+                "parameters": [
+                    {
+                        "name": "programs",
+                        "in": "body",
+                        "description": "One of follow/unfollow/block/unblock/approve/ignore.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Program"
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -681,6 +1249,28 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "POST one or more videos to the Content Warehouse.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Video"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/content/videos/{video-id}": {
@@ -716,6 +1306,42 @@
                         "in": "query",
                         "description": "Return media later than this min_id.",
                         "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Video"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "POST to create/update content for the specified video.",
+                "parameters": [
+                    {
+                        "name": "video-id",
+                        "in": "path",
+                        "description": "MPX ID of video to create or update.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "list-id",
+                        "in": "query",
+                        "description": "Brand of items to return.",
+                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -788,6 +1414,28 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "POST (create) a new list of videos or programs.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/List"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/content/lists/{list-id}": {
@@ -827,6 +1475,37 @@
                         "description": "Return media later than this min_id.",
                         "type": "integer",
                         "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/List"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "Update the specified list of content items",
+                "parameters": [
+                    {
+                        "name": "list-id",
+                        "in": "path",
+                        "description": "Brand of items to return.",
+                        "type": "string",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -931,43 +1610,28 @@
                 }
             }
         },
-        "Episode": {
+        "Watchlist": {
             "type": "object",
             "properties": {
-                "created_time": {
-                    "description": "Epoc time (ms)",
-                    "type": "integer"
+                "page": {
+                    "$ref": "#/definitions/Page"
                 },
-                "type": {
-                    "type": "string"
-                },
-                "filter": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "images": {
-                    "properties": {
-                        "low_resolution": {
-                            "$ref": "#/definitions/Image"
-                        },
-                        "thumbnail": {
-                            "$ref": "#/definitions/Image"
-                        },
-                        "standard_resolution": {
-                            "$ref": "#/definitions/Image"
-                        }
+                "programs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Program"
                     }
                 },
                 "videos": {
-                    "properties": {
-                        "low_resolution": {
-                            "$ref": "#/definitions/Image"
-                        },
-                        "standard_resolution": {
-                            "$ref": "#/definitions/Image"
-                        }
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Video"
+                    }
+                },
+                "tiles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Tile"
                     }
                 }
             }
@@ -975,40 +1639,254 @@
         "App": {
             "type": "object",
             "properties": {
-                "user_name": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
+                },
+                "background_color": {
+                    "type": "string"
+                },
+                "font_package": {
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "endpoints": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "configuration": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "key": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "pages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Page"
+                    }
                 }
             }
         },
-        "AppHomepage": {
+        "AppHome": {
             "type": "object",
             "properties": {
-                "user_name": {
+                "page": {
+                    "$ref": "#/definitions/Page"
+                },
+                "watchlist": {
+                    "$ref": "#/definitions/Watchlist"
+                }
+            }
+        },
+        "AppPrograms": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "$ref": "#/definitions/Page"
+                },
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "category_id": {
+                                "type": "string"
+                            },
+                            "button_id": {
+                                "type": "string"
+                            },
+                            "programs": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/Program"
+                                }
+                            }
+                        }
+                    }
+                },
+                "shelves": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Shelf"
+                    }
+                }
+            }
+        },
+        "AppProgram": {
+            "type": "object",
+            "properties": {
+                "app_id": {
                     "type": "string"
                 },
-                "first_name": {
+                "program_id": {
                     "type": "string"
                 },
-                "last_name": {
+                "title": {
                     "type": "string"
                 },
-                "type": {
+                "mvpd_id": {
                     "type": "string"
                 },
-                "id": {
+                "page": {
+                    "$ref": "#/definitions/Page"
+                },
+                "program": {
+                    "$ref": "#/definitions/Program"
+                },
+                "header": {
                     "type": "string"
+                },
+                "flags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Rule"
+                    }
+                },
+                "shelves": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Shelf"
+                    }
+                }
+            }
+        },
+        "AppPlay": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "mvpd_id": {
+                    "type": "string"
+                },
+                "page": {
+                    "$ref": "#/definitions/Page"
+                },
+                "program": {
+                    "$ref": "#/definitions/Program"
+                },
+                "video": {
+                    "$ref": "#/definitions/Video"
+                },
+                "header": {
+                    "type": "string"
+                },
+                "flags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Rule"
+                    }
+                },
+                "shelves": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Shelf"
+                    }
+                }
+            }
+        },
+        "AppVideo": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "mvpd_id": {
+                    "type": "string"
+                },
+                "page": {
+                    "$ref": "#/definitions/Page"
+                },
+                "program": {
+                    "$ref": "#/definitions/Program"
+                },
+                "video": {
+                    "$ref": "#/definitions/Video"
+                },
+                "next": {
+                    "$ref": "#/definitions/Video"
+                },
+                "suggestions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Video"
+                    }
+                },
+                "episodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Video"
+                    }
+                },
+                "header": {
+                    "type": "string"
+                },
+                "flags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Rule"
+                    }
+                },
+                "tray": {
+                    "$ref": "#/definitions/Shelf"
+                }
+            }
+        },
+        "AppSearch": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "$ref": "#/definitions/Page"
+                },
+                "shelves": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Shelf"
+                    }
+                },
+                "programs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Program"
+                    }
+                },
+                "videos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Video"
+                    }
                 }
             }
         },
@@ -1042,22 +1920,91 @@
                 }
             }
         },
-        "Settings": {
+        "Page": {
             "type": "object",
             "properties": {
-                "user_name": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
                 "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "leading": {
+                    "type": "string"
+                },
+                "header": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "elements": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "shelves": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Shelf"
+                    }
+                }
+            }
+        },
+        "AppSettings": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "$ref": "#/definitions/Page"
+                },
+                "sub_pages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Page"
+                    }
+                },
+                "key": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Rule"
+                    }
+                }
+            }
+        },
+        "Tile": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "action_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "Button": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "image_url": {
                     "type": "string"
                 }
             }
@@ -1065,20 +2012,92 @@
         "Shelf": {
             "type": "object",
             "properties": {
-                "user_name": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "tiles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Tile"
+                    }
+                },
+                "buttons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Button"
+                    }
+                },
+                "size": {
+                    "type": "object",
+                    "properties": {
+                        "width": {
+                            "type": "integer"
+                        },
+                        "height": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "leading": {
+                    "type": "string"
+                },
+                "flags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Rule"
+                    }
+                },
+                "item_count": {
+                    "type": "integer"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Rule"
+                    }
+                }
+            }
+        },
+        "Markup": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                },
+                "markup": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Markup"
+                    }
+                }
+            }
+        },
+        "Rule": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Rule"
+                    }
                 }
             }
         },

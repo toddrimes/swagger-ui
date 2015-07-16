@@ -1,0 +1,1190 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "v1",
+        "title": "Roku API",
+        "description": "## Deleting Objects
+We do our best to have all our URLs be
+[RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer).
+Every endpoint (URL) may support one of four different http verbs. GET
+requests fetch information about an object, POST requests create objects,
+PUT requests update objects, and finally DELETE requests will delete
+objects.
+
+Since many old browsers don't support PUT or DELETE, we've made it easy to
+fake PUTs and DELETEs. All you have to do is do a POST with _method=PUT or
+_method=DELETE as a parameter and we will treat it as if you used PUT or
+DELETE respectively.
+
+## Structure
+
+### The Envelope
+Every response is contained by an envelope. That is, each response has a
+predictable set of keys with which you can expect to interact:
+```json
+{
+    \"meta\": {
+        \"code\": 200
+    },
+    \"data\": {
+        ...
+    },
+    \"pagination\": {
+        \"next_url\": \"...\",
+        \"next_max_id\": \"13872296\"
+    }
+}
+```
+
+#### META
+The meta key is used to communicate extra information about the response to
+the developer. If all goes well, you'll only ever see a code key with value
+200. However, sometimes things go wrong, and in that case you might see a
+response like:
+```json
+{
+    \"meta\": {
+        \"error_type\": \"NotFoundException\",
+        \"code\": 404,
+        \"error_message\": \"...\"
+    }
+}
+```
+
+#### DATA
+The data key is the meat of the response. It may be a list or dictionary,
+but either way this is where you'll find the data you requested.
+#### PAGINATION
+Sometimes you just can't get enough. For this reason, we've provided a
+convenient way to access more data in any request for sequential data.
+Simply call the url in the next_url parameter and we'll respond with the
+next set of data.
+```json
+{
+    ...
+    \"pagination\": {
+        \"next_url\": \"https://uat-api.nbcuni.com/content-api/programs?max_id=13872296\",
+        \"next_max_id\": \"13872296\"
+    }
+}
+```
+On views where pagination is present, we also support the \"count\" parameter.
+Simply set this to the number of items you'd like to receive. Note that the
+default values should be fine for most applications - but if you decide to
+increase this number there is a maximum value defined on each endpoint.
+
+### JSONP
+If you're writing an AJAX application, and you'd like to wrap our response
+with a callback, all you have to do is specify a callback parameter with
+any API call:
+```
+https://uat-api.nbcuni.com/content-api/programs?max_id=13872296&callback=callbackFunction
+```
+Would respond with:
+```js
+callbackFunction({
+    ...
+});
+```
+",
+        "termsOfService": "http://api.nbcuni.com/about/legal/terms/api"
+    },
+    "host": "api.nbcuni.com",
+    "basePath": "/",
+    "schemes": [
+        "https"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "Apps"
+        },
+        {
+            "name": "Content"
+        }
+    ],
+    "securityDefinitions": {
+        "key": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "api_key"
+        }
+    },
+    "security": [
+        {
+            "key": []
+        }
+    ],
+    "parameters": {
+        "app-id": {
+            "name": "app-id",
+            "in": "path",
+            "description": "The application (e.g. Roku, X-Box, Apple TV) identifier",
+            "type": "string"
+        },
+        "brand-id": {
+            "name": "brand-id",
+            "in": "query",
+            "description": "The brand identifier (e.g. NBCD, SYFY, USAD)",
+            "type": "string"
+        },
+        "episode-id": {
+            "name": "episode-id",
+            "in": "path",
+            "description": "The episode identifier (non-intelligent)",
+            "type": "number"
+        },
+        "list-id": {
+            "name": "list-id",
+            "in": "path",
+            "description": "The list identifier (non-intelligent)",
+            "type": "number"
+        },
+        "program-id": {
+            "name": "program-id",
+            "in": "path",
+            "description": "The program identifier (e.g. The Voice)",
+            "type": "number"
+        },
+        "shelf-id": {
+            "name": "shelf-id",
+            "in": "path",
+            "description": "The identifier for any global shelf (e.g. featured, new, popular)",
+            "type": "string"
+        },
+        "user-id": {
+            "name": "user-id",
+            "in": "path",
+            "description": "The user identifier",
+            "type": "number"
+        },
+        "video-id": {
+            "name": "video-id",
+            "in": "path",
+            "description": "The video identifier",
+            "type": "number"
+        }
+    },
+    "paths": {
+        "/apps/": {
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get a list of supported apps.",
+                "responses": {
+                    "200": {
+                        "description": "The application list",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/List"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}": {
+            "parameters": [
+                {
+                    "$ref": "#/parameters/app-id"
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get basic information about an app.",
+                "responses": {
+                    "200": {
+                        "description": "The app object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/App"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/homepage": {
+            "parameters": [
+                {
+                    "$ref": "#/parameters/app-id"
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get global homepage for an app.",
+                "responses": {
+                    "200": {
+                        "description": "The app-homepage object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppHomepage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/shelf/{shelf-id}": {
+            "parameters": [
+                {
+                    "$ref": "#/parameters/app-id"
+                },
+                {
+                    "$ref": "#/parameters/shelf-id"
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get global homepage for an app.",
+                "responses": {
+                    "200": {
+                        "description": "The app-homepage object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/Shelf"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/watchlist/[{episode-id}]": {
+            "parameters": [
+                {
+                    "$ref": "#/parameters/app-id"
+                },
+                {
+                    "$ref": "#/parameters/episode-id"
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get global homepage for an app.",
+                "responses": {
+                    "200": {
+                        "description": "The app-homepage object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppHomepage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/programs/": {
+            "parameters": [
+                {
+                    "$ref": "#/parameters/app-id"
+                },
+                {
+                    "$ref": "#/parameters/brand-id"
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get a list of programs for an app, optionally limited by brand.",
+                "responses": {
+                    "200": {
+                        "description": "The app-homepage object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppHomepage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/programs/{program-id}": {
+            "parameters": [
+                {
+                    "$ref": "#/parameters/app-id"
+                },
+                {
+                    "$ref": "#/parameters/program-id"
+                },
+                {
+                    "name": "brand_id",
+                    "in": "query",
+                    "description": "Brand of programs to return.",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get a program info for 1 program in 1 app, optionally limited by brand.",
+                "responses": {
+                    "200": {
+                        "description": "The app-homepage object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppHomepage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/episodes/{episode-id}": {
+            "parameters": [
+                {
+                    "$ref": "#/parameters/app-id"
+                },
+                {
+                    "$ref": "#/parameters/episode-id"
+                },
+                {
+                    "name": "brand_id",
+                    "in": "query",
+                    "description": "Brand of programs to return.",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get an episode for an app, optionally limited by brand.",
+                "responses": {
+                    "200": {
+                        "description": "The app-homepage object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/Episode"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/app/{app-id}/search": {
+            "get": {
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Search for content by query.",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/app-id"
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "A query string",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Number of users to return.",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "object",
+                                    "items": {
+                                        "$ref": "#/definitions/List"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ErrorResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app/{app-id}/play/{episode-id}": {
+            "get": {
+                "tags": [
+                    "Apps"
+                ],
+                "description": "App-specific play object wrapping the specified episode .",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/app-id"
+                    },
+                    {
+                        "$ref": "#/parameters/episode-id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "object",
+                                    "items": {
+                                        "$ref": "#/definitions/List"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ErrorResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app/{app-id}/settings/{user-id}": {
+            "get": {
+                "tags": [
+                    "Apps"
+                ],
+                "description": "App-specific Settings object for the specified User .",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/app-id"
+                    },
+                    {
+                        "$ref": "#/parameters/user-id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "object",
+                                    "items": {
+                                        "$ref": "#/definitions/Settings"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ErrorResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/content/programs/": {
+            "get": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "Paginated list of programs across all brands or 1 brand.",
+                "parameters": [
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "Brand of items to return.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Count of items to return.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "max_id",
+                        "in": "query",
+                        "description": "Return media earlier than this max_id.s",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "min_id",
+                        "in": "query",
+                        "description": "Return media later than this min_id.",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Program"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/content/videos/": {
+            "get": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "Paginated list of videos content across all brands or 1 brand.",
+                "parameters": [
+                    {
+                        "name": "brand_id",
+                        "in": "query",
+                        "description": "Brand of items to return.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Count of items to return.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "max_id",
+                        "in": "query",
+                        "description": "Return media earlier than this max_id.s",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "min_id",
+                        "in": "query",
+                        "description": "Return media later than this min_id.",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Video"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/content/videos/{video-id}": {
+            "get": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "Unbranded video data for the specified video.",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/video-id"
+                    },
+                    {
+                        "name": "brand_id",
+                        "in": "query",
+                        "description": "Brand of items to return.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Count of items to return.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "max_id",
+                        "in": "query",
+                        "description": "Return media earlier than this max_id.s",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "min_id",
+                        "in": "query",
+                        "description": "Return media later than this min_id.",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Video"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/content/lists/": {
+            "get": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "Paginated list of Lists, optionally limited by brand.",
+                "parameters": [
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "Brand of items to return.",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Count of items to return.",
+                        "type": "integer",
+                        "required": false
+                    },
+                    {
+                        "name": "max_id",
+                        "in": "query",
+                        "description": "Return media earlier than this max_id.s",
+                        "type": "integer",
+                        "required": false
+                    },
+                    {
+                        "name": "min_id",
+                        "in": "query",
+                        "description": "Return media later than this min_id.",
+                        "type": "integer",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/List"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/content/lists/{list-id}": {
+            "get": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "1 paginated list of content items, optionally limited by brand.",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/list-id"
+                    },
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "Brand of items to return.",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Count of items to return.",
+                        "type": "integer",
+                        "required": false
+                    },
+                    {
+                        "name": "max_id",
+                        "in": "query",
+                        "description": "Return media earlier than this max_id.s",
+                        "type": "integer",
+                        "required": false
+                    },
+                    {
+                        "name": "min_id",
+                        "in": "query",
+                        "description": "Return media later than this min_id.",
+                        "type": "integer",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/List"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Image": {
+            "type": "object",
+            "properties": {
+                "created_time": {
+                    "description": "Epoc time (ms)",
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "properties": {
+                        "low_resolution": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "thumbnail": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "standard_resolution": {
+                            "$ref": "#/definitions/Image"
+                        }
+                    }
+                },
+                "videos": {
+                    "properties": {
+                        "low_resolution": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "standard_resolution": {
+                            "$ref": "#/definitions/Image"
+                        }
+                    }
+                }
+            }
+        },
+        "Program": {
+            "type": "object",
+            "properties": {
+                "created_time": {
+                    "description": "Epoc time (ms)",
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "properties": {
+                        "low_resolution": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "thumbnail": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "standard_resolution": {
+                            "$ref": "#/definitions/Image"
+                        }
+                    }
+                },
+                "videos": {
+                    "properties": {
+                        "low_resolution": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "standard_resolution": {
+                            "$ref": "#/definitions/Image"
+                        }
+                    }
+                }
+            }
+        },
+        "Episode": {
+            "type": "object",
+            "properties": {
+                "created_time": {
+                    "description": "Epoc time (ms)",
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "properties": {
+                        "low_resolution": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "thumbnail": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "standard_resolution": {
+                            "$ref": "#/definitions/Image"
+                        }
+                    }
+                },
+                "videos": {
+                    "properties": {
+                        "low_resolution": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "standard_resolution": {
+                            "$ref": "#/definitions/Image"
+                        }
+                    }
+                }
+            }
+        },
+        "App": {
+            "type": "object",
+            "properties": {
+                "user_name": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "AppHomepage": {
+            "type": "object",
+            "properties": {
+                "user_name": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "ErrorResponse": {
+            "required": [
+                "message"
+            ],
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "List": {
+            "type": "object",
+            "properties": {
+                "user_name": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "Settings": {
+            "type": "object",
+            "properties": {
+                "user_name": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "Shelf": {
+            "type": "object",
+            "properties": {
+                "user_name": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "Video": {
+            "type": "object",
+            "properties": {
+                "created_time": {
+                    "description": "Epoc time (ms)",
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "properties": {
+                        "low_resolution": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "thumbnail": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "standard_resolution": {
+                            "$ref": "#/definitions/Image"
+                        }
+                    }
+                },
+                "videos": {
+                    "properties": {
+                        "low_resolution": {
+                            "$ref": "#/definitions/Image"
+                        },
+                        "standard_resolution": {
+                            "$ref": "#/definitions/Image"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
