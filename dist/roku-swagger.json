@@ -1138,13 +1138,13 @@
                     {
                         "name": "max_id",
                         "in": "query",
-                        "description": "Return media earlier than this max_id.s",
+                        "description": "Return programs earlier than this max_id.s",
                         "type": "integer"
                     },
                     {
                         "name": "min_id",
                         "in": "query",
-                        "description": "Return media later than this min_id.",
+                        "description": "Return programs later than this min_id.",
                         "type": "integer"
                     }
                 ],
@@ -1174,7 +1174,7 @@
                     {
                         "name": "programs",
                         "in": "body",
-                        "description": "One of follow/unfollow/block/unblock/approve/ignore.",
+                        "description": "Post a collection of programs to the content warehouse.",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -1223,13 +1223,13 @@
                     {
                         "name": "max_id",
                         "in": "query",
-                        "description": "Return media earlier than this max_id.s",
+                        "description": "Return videos earlier than this max_id.s",
                         "type": "integer"
                     },
                     {
                         "name": "min_id",
                         "in": "query",
-                        "description": "Return media later than this min_id.",
+                        "description": "Return videosz later than this min_id.",
                         "type": "integer"
                     }
                 ],
@@ -1296,15 +1296,15 @@
                         "type": "integer"
                     },
                     {
-                        "name": "max_id",
+                        "name": "max_date",
                         "in": "query",
-                        "description": "Return media earlier than this max_id.s",
+                        "description": "Return videos earlier than this max_date",
                         "type": "integer"
                     },
                     {
-                        "name": "min_id",
+                        "name": "min_date",
                         "in": "query",
-                        "description": "Return media later than this min_id.",
+                        "description": "Return vidoes later than this min_date.",
                         "type": "integer"
                     }
                 ],
@@ -1384,16 +1384,16 @@
                         "required": false
                     },
                     {
-                        "name": "max_id",
+                        "name": "max_age",
                         "in": "query",
-                        "description": "Return media earlier than this max_id.s",
+                        "description": "Return lists younger than this max_age",
                         "type": "integer",
                         "required": false
                     },
                     {
-                        "name": "min_id",
+                        "name": "min_age",
                         "in": "query",
-                        "description": "Return media later than this min_id.",
+                        "description": "Return lists older than this min_age",
                         "type": "integer",
                         "required": false
                     }
@@ -1459,20 +1459,6 @@
                         "name": "count",
                         "in": "query",
                         "description": "Count of items to return.",
-                        "type": "integer",
-                        "required": false
-                    },
-                    {
-                        "name": "max_id",
-                        "in": "query",
-                        "description": "Return media earlier than this max_id.s",
-                        "type": "integer",
-                        "required": false
-                    },
-                    {
-                        "name": "min_id",
-                        "in": "query",
-                        "description": "Return media later than this min_id.",
                         "type": "integer",
                         "required": false
                     }
