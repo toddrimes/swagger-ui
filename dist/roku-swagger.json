@@ -342,136 +342,7 @@
                 }
             }
         },
-        "/apps/{app-id}/pages/shelf": {
-            "get": {
-                "parameters": [
-                    {
-                        "name": "app-id",
-                        "in": "path",
-                        "description": "ID of an App",
-                        "type": "string",
-                        "required": true
-                    },
-                    {
-                        "name": "shelf-id",
-                        "in": "query",
-                        "description": "ID of a Shelf",
-                        "type": "string",
-                        "required": false
-                    },
-                    {
-                        "name": "mvpd-id",
-                        "in": "query",
-                        "description": "ID of an MVPD",
-                        "type": "string",
-                        "required": false
-                    }
-                ],
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get structure data for a shelf with the given ID.",
-                "responses": {
-                    "200": {
-                        "description": "The app-home object",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppShelf"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "parameters": [
-                    {
-                        "name": "app-id",
-                        "in": "path",
-                        "description": "ID of an App",
-                        "type": "string",
-                        "required": true
-                    },
-                    {
-                        "name": "shelf-id",
-                        "in": "query",
-                        "description": "ID of an App",
-                        "type": "string",
-                        "required": false
-                    },
-                    {
-                        "name": "mvpd-id",
-                        "in": "query",
-                        "description": "ID of an MVPD",
-                        "type": "string",
-                        "required": false
-                    }
-                ],
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Create or Update a structural shelf (e.g Roku shelf) for an app. Also, the Search shelf",
-                "responses": {
-                    "200": {
-                        "description": "The shelf object",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppShelf"
-                                }
-                            }
-                        }
-                    },
-                    "304": {
-                        "description": "The shelf object was unchanged",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppShelf"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/watchlist/{video-id}": {
+        "/apps/{app-id}/pages/watchlist/{video-id}": {
             "parameters": [
                 {
                     "name": "app-id",
@@ -481,11 +352,11 @@
                     "type": "string"
                 },
                 {
-                    "name": "video-id",
-                    "in": "path",
-                    "description": "ID of suggested video",
+                    "name": "video-ids",
+                    "in": "query",
+                    "description": "ID of recent unfinished videos",
                     "required": true,
-                    "type": "string"
+                    "type": "array"
                 },
                 {
                     "name": "suggested-video-id",
