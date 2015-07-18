@@ -3,7 +3,7 @@
     "info": {
         "version": "v1",
         "title": "NBCU TVE API",
-        "description": "The first version of the TVE API is an exciting step forward towards\nmaking it easier for developers to access uniform TVE data. We created it\nso that you can surface NBCU's amazing content in predictable, but fun and\ninnovative ways.\n\nBuild something great!\n\nAll endpoints are only accessible via https and are located at\nuat-api.nbcuni.com.\n\nFor instance: you can grab the most popular videos at the moment by \naccessing the following URL with your api_key header:\n\n```\n  https://uat-api.nbcuni.com/videos/popular\n```\n\n## Deleting Objects\nWe do our best to have all our URLs be\n[RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer).\nEvery endpoint (URL) may support one of four different http verbs. GET\nrequests fetch information about an object, POST requests create objects,\nPUT requests update objects, and finally DELETE requests will delete\nobjects.\nSince many old browsers don't support PUT or DELETE, we've made it easy to\nfake PUTs and DELETEs. All you have to do is do a POST with _method=PUT or\n_method=DELETE as a parameter and we will treat it as if you used PUT or\nDELETE respectively.\n## Structure\n### The Envelope\nEvery response is contained by an envelope. That is, each response has a\npredictable set of keys with which you can expect to interact:\n```json\n{\n    \"meta\": {\n        \"code\": 200\n    },\n    \"data\": {\n        ...\n    },\n    \"pagination\": {\n        \"next_url\": \"...\",\n        \"next_max_id\": \"13872296\"\n    }\n}\n```\n#### META\nThe meta key is used to communicate extra information about the response to\nthe developer. If all goes well, you'll only ever see a code key with value\n200.\n\nHowever, sometimes things go wrong, and in that case you might see a\nresponse like:\n```json\n{\n    \"meta\": {\n        \"error_type\": \"Not Found Exception\",\n        \"code\": 404,\n        \"error_message\": \"...\"\n    }\n}\n```\n#### DATA\nThe data key is the meat of the response. It may be a list or dictionary,\nbut either way this is where you'll find the data you requested.\n#### PAGINATION\nSometimes you just can't get enough. For this reason, we've provided a\nconvenient way to access more data in any request for sequential data.\nSimply call the url in the next_url parameter and we'll respond with the\nnext set of data.\n```json\n  {\n      ...\n      \"pagination\": {\n          \"next_url\": \"https://uat-api.nbcuni.com/content-api/programs?max_id=13872296\",\n          \"next_max_id\": \"13872296\"\n      }\n  }\n```\nOn views where pagination is present, we also support the \"count\" parameter.\nSimply set this to the number of items you'd like to receive. Note that the\ndefault values should be fine for most applications - but if you decide to\nincrease this number there is a maximum value defined on each endpoint.\n\n### JSONP\nIf you're writing an AJAX application, and you'd like to wrap our response\nwith a callback, all you have to do is specify a callback parameter with\nany API call:\n```\nhttps://uat-api.nbcuni.com/videos/recent?&callback=callbackFunction\n```\nWould respond with:\n```js\ncallbackFunction({\n    ...\n});\n```\n",
+        "description": "The first version of the TVE API is an exciting step forward towards\nmaking it easier for developers to access uniform TVE data. We created it\nso that you can surface NBCU's amazing content in predictable, but fun and\ninnovative ways.\n\nBuild something great!\n\nAll endpoints are only accessible via https and are located at\nuat-api.nbcuni.com.\n\nFor instance: you can grab the most popular videos at the moment by \naccessing the following URL with your api_key header:\n\n```\n  https://uat-api.nbcuni.com/videos/popular\n```\n\n## Deleting Objects\nWe do our best to have all our URLs be\n[RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer).\nEvery endpoint (URL) may support one of four different http verbs. GET\nrequests fetch information about an object, POST requests create objects,\nPUT requests update objects, and finally DELETE requests will delete\nobjects.\nSince many old browsers don't support PUT or DELETE, we've made it easy to\nfake PUTs and DELETEs. All you have to do is do a POST with _method=PUT or\n_method=DELETE as a parameter and we will treat it as if you used PUT or\nDELETE respectively.\n## Structure\n### The Envelope\nEvery response is contained by an envelope. That is, each response has a\npredictable set of keys with which you can expect to interact:\n```json\n{\n    \"meta\": {\n        \"code\": 200\n    },\n    \"data\": {\n        ...\n    },\n    \"pagination\": {\n        \"next_url\": \"...\",\n        \"next_max_id\": \"13872296\"\n    }\n}\n```\n#### META\nThe meta key is used to communicate extra information about the response to\nthe developer. If all goes well, you'll only ever see a code key with value\n200.\n\nHowever, sometimes things go wrong, and in that case you might see a\nresponse like:\n```json\n{\n    \"meta\": {\n        \"error_type\": \"Not Found Exception\",\n        \"code\": 404,\n        \"error_message\": \"...\"\n    }\n}\n```\n#### DATA\nThe data key is the meat of the response. It may be a list or dictionary,\nbut either way this is where you'll find the data you requested.\n#### PAGINATION\nSometimes you just can't get enough. For this reason, we've provided a\nconvenient way to access more data in any request for sequential data.\nSimply call the url in the next_url parameter and we'll respond with the\nnext set of data.\n```json\n  {\n      ...\n      \"pagination\": {\n          \"next_url\": \"https://tve-api.nbcuni.com/content-api/pages/programs?max_id=13872296\",\n          \"next_max_id\": \"13872296\"\n      }\n  }\n```\nOn views where pagination is present, we also support the \"count\" parameter.\nSimply set this to the number of items you'd like to receive. Note that the\ndefault values should be fine for most applications - but if you decide to\nincrease this number there is a maximum value defined on each endpoint.\n\n### JSONP\nIf you're writing an AJAX application, and you'd like to wrap our response\nwith a callback, all you have to do is specify a callback parameter with\nany API call:\n```\nhttps://uat-api.nbcuni.com/videos/recent?&callback=callbackFunction\n```\nWould respond with:\n```js\ncallbackFunction({\n    ...\n});\n```\n",
         "termsOfService": "http://instagram.com/about/legal/terms/api"
     },
     "host": "uat-api.nbcuni.com",
@@ -173,7 +173,7 @@
                     {
                         "name": "page",
                         "in": "body",
-                        "description": "Page to add to the store",
+                        "description": "Page to add/update in the store",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/AppPage"
@@ -342,7 +342,7 @@
                 }
             }
         },
-        "/apps/{app-id}/shelf": {
+        "/apps/{app-id}/pages/shelf": {
             "get": {
                 "parameters": [
                     {
@@ -531,7 +531,7 @@
                 }
             }
         },
-        "/apps/{app-id}/programs/": {
+        "/apps/{app-id}/pages/programs": {
             "get": {
                 "parameters": [
                     {
@@ -625,7 +625,7 @@
                 }
             }
         },
-        "/apps/{app-id}/videos/{video-id}": {
+        "/apps/{app-id}/pages/videos/{video-id}": {
             "parameters": [
                 {
                     "name": "app-id",
@@ -683,7 +683,7 @@
                 }
             }
         },
-        "/apps/{app-id}/search": {
+        "/apps/{app-id}/pages/search": {
             "get": {
                 "tags": [
                     "Apps"
@@ -740,7 +740,7 @@
                 }
             }
         },
-        "/apps/{app-id}/play/{video-id}": {
+        "/apps/{app-id}/pages/play/{video-id}": {
             "get": {
                 "tags": [
                     "Apps"
@@ -794,7 +794,7 @@
                 }
             }
         },
-        "/apps/{app-id}/settings/": {
+        "/apps/{app-id}/pages/settings": {
             "get": {
                 "tags": [
                     "Apps"
@@ -895,13 +895,51 @@
                     {
                         "name": "programs",
                         "in": "body",
-                        "description": "Post a collection of programs to the content warehouse.",
+                        "description": "Add/update programs in the content warehouse.",
                         "schema": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/Program"
                             }
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Program"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/content/programs/{program-id}": {
+            "get": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "GET Paginated list of programs across all brands or 1 brand.",
+                "parameters": [
+                    {
+                        "name": "program-id",
+                        "in": "path",
+                        "description": "ID of specific program to return.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Count of items to return.",
+                        "type": "integer"
                     }
                 ],
                 "responses": {
@@ -1045,42 +1083,6 @@
                         }
                     }
                 }
-            },
-            "post": {
-                "tags": [
-                    "Content"
-                ],
-                "description": "POST to create/update content for the specified video.",
-                "parameters": [
-                    {
-                        "name": "video-id",
-                        "in": "path",
-                        "description": "MPX ID of video to create or update.",
-                        "type": "string"
-                    },
-                    {
-                        "name": "list-id",
-                        "in": "query",
-                        "description": "Brand of items to return.",
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/Video"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         },
         "/content/lists/": {
@@ -1182,37 +1184,6 @@
                         "description": "Count of items to return.",
                         "type": "integer",
                         "required": false
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/List"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "Content"
-                ],
-                "description": "Update the specified list of content items",
-                "parameters": [
-                    {
-                        "name": "list-id",
-                        "in": "path",
-                        "description": "Brand of items to return.",
-                        "type": "string",
-                        "required": true
                     }
                 ],
                 "responses": {
