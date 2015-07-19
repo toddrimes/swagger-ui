@@ -64,26 +64,52 @@
         }
     },
     "paths": {
-        "/apps/": {
+        "/content/lists/": {
             "get": {
-                "security": [
+                "tags": [
+                    "Content"
+                ],
+                "description": "Paginated list of Lists, optionally limited by brand.",
+                "parameters": [
                     {
-                        "key": []
+                        "name": "brand",
+                        "in": "query",
+                        "description": "Brand of items to return.",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Count of items to return.",
+                        "type": "integer",
+                        "required": false
+                    },
+                    {
+                        "name": "max_age",
+                        "in": "query",
+                        "description": "Return lists younger than this max_age",
+                        "type": "integer",
+                        "required": false
+                    },
+                    {
+                        "name": "min_age",
+                        "in": "query",
+                        "description": "Return lists older than this min_age",
+                        "type": "integer",
+                        "required": false
                     }
                 ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "GET a list of supported App configurations.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "properties": {
                                 "data": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/definitions/App"
+                                        "$ref": "#/definitions/List"
                                     }
                                 }
                             }
@@ -92,490 +118,50 @@
                 }
             },
             "post": {
-                "parameters": [
-                    {
-                        "name": "mvpd-id",
-                        "in": "query",
-                        "description": "ID of an MVPD",
-                        "type": "string",
-                        "required": false
-                    }
-                ],
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
                 "tags": [
-                    "Apps"
+                    "Content"
                 ],
-                "description": "Create a new app by POSTing its configuration data and optional MVPD.",
-                "responses": {
-                    "200": {
-                        "description": "The App object was created.",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/App"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}": {
-            "get": {
-                "parameters": [
-                    {
-                        "name": "app-id",
-                        "in": "path",
-                        "description": "ID of an App",
-                        "type": "string",
-                        "required": true
-                    },
-                    {
-                        "name": "mvpd",
-                        "in": "query",
-                        "description": "ID of an MVPD",
-                        "type": "string",
-                        "required": false
-                    }
-                ],
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get configuration 'App' object for the specified app.",
-                "responses": {
-                    "200": {
-                        "description": "The app object",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/App"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/pages/": {
-            "post": {
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "body",
-                        "description": "Page to add/update in the store",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/AppPage"
-                        }
-                    },
-                    {
-                        "name": "app-id",
-                        "in": "path",
-                        "description": "ID of an App",
-                        "type": "string",
-                        "required": true
-                    },
-                    {
-                        "name": "mvpd-id",
-                        "in": "query",
-                        "description": "ID of an MVPD",
-                        "type": "string",
-                        "required": false
-                    }
-                ],
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Add a Page (structure) with global metadata, layout, and styling markup for an app-specific view [with optional mvpd].  If the page contains an alias (e.g. home or watchlist, create/override the aliased page) ",
-                "responses": {
-                    "200": {
-                        "description": "The new page object OR \"The page was upodated\"",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppPage"
-                                }
-                            }
-                        }
-                    },
-                    "304": {
-                        "description": "The page object was unchanged",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppHome"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/pages/{page-id}": {
-            "get": {
-                "parameters": [
-                    {
-                        "name": "app-id",
-                        "in": "path",
-                        "description": "ID of an App",
-                        "type": "string",
-                        "required": true
-                    },
-                    {
-                        "name": "page-id",
-                        "in": "path",
-                        "description": "ID of a Page",
-                        "type": "integer",
-                        "required": true
-                    },
-                    {
-                        "name": "mvpd-id",
-                        "in": "query",
-                        "description": "ID of an MVPD",
-                        "type": "string",
-                        "required": false
-                    }
-                ],
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get a given view Page (structure only) for an app (with optional MVPD), including relatively static metadata, layout, and styling markup to wrap around associated content.",
-                "responses": {
-                    "200": {
-                        "description": "The specified Page object",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppPage"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/pages/home": {
-            "get": {
-                "parameters": [
-                    {
-                        "name": "app-id",
-                        "in": "path",
-                        "description": "ID of an App",
-                        "type": "string",
-                        "required": true
-                    },
-                    {
-                        "name": "mvpd-id",
-                        "in": "query",
-                        "description": "ID of an MVPD",
-                        "type": "string",
-                        "required": false
-                    }
-                ],
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get a the view Page with \"home\" alias.",
-                "responses": {
-                    "200": {
-                        "description": "The specified Page object",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppPage"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/pages/watchlist/{video-id}": {
-            "parameters": [
-                {
-                    "name": "app-id",
-                    "in": "path",
-                    "description": "ID of app",
-                    "required": true,
-                    "type": "string"
-                },
-                {
-                    "name": "video-ids",
-                    "in": "query",
-                    "description": "ID of recent unfinished videos",
-                    "required": true,
-                    "type": "array"
-                },
-                {
-                    "name": "suggested-video-id",
-                    "in": "query",
-                    "description": "ID of suggested video",
-                    "required": false,
-                    "type": "string"
-                }
-            ],
-            "get": {
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get user-custom watchlist for an app. The first is the user's most recently incompletely watched video.  The second is the video with the 'suggestion' ID",
+                "description": "POST (create) a new list of videos or programs.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "properties": {
                                 "data": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/definitions/AppWatchlistPage"
+                                        "$ref": "#/definitions/List"
                                     }
                                 }
                             }
                         }
-                    },
-                    "404": {
-                        "description": "One or more video not found"
-                    },
-                    "default": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/AppErrorResponse"
-                        }
                     }
                 }
             }
         },
-        "/apps/{app-id}/pages/programs": {
+        "/content/lists/{list-id}": {
             "get": {
+                "tags": [
+                    "Content"
+                ],
+                "description": "1 paginated list of content items, optionally limited by brand.",
                 "parameters": [
                     {
-                        "name": "app-id",
-                        "in": "path",
-                        "description": "app ID",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get an App-specific structure-wrapped list of programs for an app.",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppProgramsPage"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "App-id or Programs not found"
-                    },
-                    "default": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/AppErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/pages/programs/{program-id}": {
-            "parameters": [
-                {
-                    "$ref": "#/parameters/app-id"
-                },
-                {
-                    "$ref": "#/parameters/program-id"
-                },
-                {
-                    "name": "mvpd-id",
-                    "in": "query",
-                    "description": "MVPD by which to filter programs.",
-                    "type": "string",
-                    "required": false
-                }
-            ],
-            "get": {
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get program structure and content for a program, optionally including mvpd.",
-                "responses": {
-                    "200": {
-                        "description": "The program structured object",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppProgramPage"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Key not found"
-                    },
-                    "default": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/AppErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/pages/videos/{video-id}": {
-            "parameters": [
-                {
-                    "name": "app-id",
-                    "in": "path",
-                    "description": "App ID",
-                    "type": "string",
-                    "required": true
-                },
-                {
-                    "name": "video-id",
-                    "in": "path",
-                    "description": "Video ID",
-                    "type": "string",
-                    "required": true
-                },
-                {
-                    "name": "mvpd-id",
-                    "in": "query",
-                    "description": "Optional MVPD",
-                    "type": "string",
-                    "required": false
-                }
-            ],
-            "get": {
-                "security": [
-                    {
-                        "key": []
-                    }
-                ],
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get a video for an app, optionally altered by MVPD.",
-                "responses": {
-                    "200": {
-                        "description": "The application-specific video object",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "$ref": "#/definitions/AppVideoPage"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Key not found"
-                    },
-                    "default": {
-                        "description": "Error",
-                        "schema": {
-                            "$ref": "#/definitions/AppErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/pages/search": {
-            "get": {
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Returns the initial App-specific search UI WITH results if query parameter q is specified",
-                "parameters": [
-                    {
-                        "$ref": "#/parameters/app-id"
+                        "$ref": "#/parameters/list-id"
                     },
                     {
-                        "name": "q",
+                        "name": "brand",
                         "in": "query",
-                        "description": "A query string",
+                        "description": "Brand of items to return.",
                         "type": "string",
-                        "required": true
+                        "required": false
                     },
                     {
                         "name": "count",
                         "in": "query",
-                        "description": "Number of users to return.",
-                        "type": "string",
+                        "description": "Count of items to return.",
+                        "type": "integer",
                         "required": false
                     }
                 ],
@@ -586,120 +172,9 @@
                             "type": "object",
                             "properties": {
                                 "data": {
-                                    "type": "object",
-                                    "items": {
-                                        "$ref": "#/definitions/AppSearchPage"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/definitions/AppErrorResponse"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/pages/play/{video-id}": {
-            "get": {
-                "tags": [
-                    "Apps"
-                ],
-                "description": "App-specific play structure wrapping the specified video .",
-                "parameters": [
-                    {
-                        "name": "app-id",
-                        "in": "path",
-                        "description": "App ID",
-                        "type": "string",
-                        "required": true
-                    },
-                    {
-                        "name": "video-id",
-                        "in": "path",
-                        "description": "Video ID",
-                        "type": "string",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "UI or App-wrapped heterogenous list of results",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/AppPlayPage"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/AppErrorResponse"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/apps/{app-id}/pages/settings": {
-            "get": {
-                "tags": [
-                    "Apps"
-                ],
-                "description": "Get App-specific Settings page.",
-                "parameters": [
-                    {
-                        "$ref": "#/parameters/app-id"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "type": "object",
-                                    "items": {
-                                        "$ref": "#/definitions/AppSettingsPage"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "data": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/definitions/AppErrorResponse"
+                                        "$ref": "#/definitions/List"
                                     }
                                 }
                             }
@@ -956,52 +431,26 @@
                 }
             }
         },
-        "/content/lists/": {
+        "/apps/": {
             "get": {
-                "tags": [
-                    "Content"
-                ],
-                "description": "Paginated list of Lists, optionally limited by brand.",
-                "parameters": [
+                "security": [
                     {
-                        "name": "brand",
-                        "in": "query",
-                        "description": "Brand of items to return.",
-                        "type": "string",
-                        "required": false
-                    },
-                    {
-                        "name": "count",
-                        "in": "query",
-                        "description": "Count of items to return.",
-                        "type": "integer",
-                        "required": false
-                    },
-                    {
-                        "name": "max_age",
-                        "in": "query",
-                        "description": "Return lists younger than this max_age",
-                        "type": "integer",
-                        "required": false
-                    },
-                    {
-                        "name": "min_age",
-                        "in": "query",
-                        "description": "Return lists older than this min_age",
-                        "type": "integer",
-                        "required": false
+                        "key": []
                     }
                 ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "GET a list of supported App configurations.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "properties": {
                                 "data": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/definitions/List"
+                                        "$ref": "#/definitions/App"
                                     }
                                 }
                             }
@@ -1010,10 +459,433 @@
                 }
             },
             "post": {
-                "tags": [
-                    "Content"
+                "parameters": [
+                    {
+                        "name": "mvpd-id",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
                 ],
-                "description": "POST (create) a new list of videos or programs.",
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Create a new app by POSTing its configuration data and optional MVPD.",
+                "responses": {
+                    "200": {
+                        "description": "The App object was created.",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/App"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "mvpd",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get configuration 'App' object for the specified app.",
+                "responses": {
+                    "200": {
+                        "description": "The app object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/App"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/pages/": {
+            "post": {
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "body",
+                        "description": "Page to add/update in the store",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/AppPage"
+                        }
+                    },
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "mvpd-id",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Add a Page (structure) with global metadata, layout, and styling markup for an app-specific view [with optional mvpd].  If the page contains an alias (e.g. home or watchlist, create/override the aliased page) ",
+                "responses": {
+                    "200": {
+                        "description": "The new page object OR \"The page was upodated\"",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppPage"
+                                }
+                            }
+                        }
+                    },
+                    "304": {
+                        "description": "The page object was unchanged",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppHome"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/pages/home": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "ID of an App",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "mvpd-id",
+                        "in": "query",
+                        "description": "ID of an MVPD",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get a the view Page with \"home\" alias.",
+                "responses": {
+                    "200": {
+                        "description": "The specified Page object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppPage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/pages/programs": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "app ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get an App-specific structure-wrapped list of programs for an app.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppProgramsPage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "App-id or Programs not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/AppErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/pages/programs/{program-id}": {
+            "parameters": [
+                {
+                    "$ref": "#/parameters/app-id"
+                },
+                {
+                    "$ref": "#/parameters/program-id"
+                },
+                {
+                    "name": "mvpd-id",
+                    "in": "query",
+                    "description": "MVPD by which to filter programs.",
+                    "type": "string",
+                    "required": false
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get program structure and content for a program, optionally including mvpd.",
+                "responses": {
+                    "200": {
+                        "description": "The program structured object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppProgramPage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/AppErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/pages/videos/{video-id}": {
+            "parameters": [
+                {
+                    "name": "app-id",
+                    "in": "path",
+                    "description": "App ID",
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "video-id",
+                    "in": "path",
+                    "description": "Video ID",
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "mvpd-id",
+                    "in": "query",
+                    "description": "Optional MVPD",
+                    "type": "string",
+                    "required": false
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get a video for an app, optionally altered by MVPD.",
+                "responses": {
+                    "200": {
+                        "description": "The application-specific video object",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/definitions/AppVideoPage"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/AppErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/pages/watchlist": {
+            "parameters": [
+                {
+                    "name": "app-id",
+                    "in": "path",
+                    "description": "ID of app",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "name": "video-ids",
+                    "in": "query",
+                    "description": "array of IDs of recent unfinished videos",
+                    "required": false,
+                    "type": "string"
+                },
+                {
+                    "name": "suggested-video-ids",
+                    "in": "query",
+                    "description": "array of IDs of ID of suggested videos",
+                    "required": false,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "security": [
+                    {
+                        "key": []
+                    }
+                ],
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get user-custom watchlist for an app. The first is the user's most recently incompletely watched video.  The second is the video with the 'suggestion' ID",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/AppWatchlistPage"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "One or more video not found"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/AppErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/pages/search": {
+            "get": {
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Returns the initial App-specific search UI WITH results if query parameter q is specified",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/app-id"
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "A query string",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Number of users to return.",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1021,9 +893,23 @@
                             "type": "object",
                             "properties": {
                                 "data": {
+                                    "type": "object",
+                                    "items": {
+                                        "$ref": "#/definitions/AppSearchPage"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/definitions/List"
+                                        "$ref": "#/definitions/AppErrorResponse"
                                     }
                                 }
                             }
@@ -1032,29 +918,69 @@
                 }
             }
         },
-        "/content/lists/{list-id}": {
+        "/apps/{app-id}/pages/play/{video-id}": {
             "get": {
                 "tags": [
-                    "Content"
+                    "Apps"
                 ],
-                "description": "1 paginated list of content items, optionally limited by brand.",
+                "description": "App-specific play structure wrapping the specified video .",
                 "parameters": [
                     {
-                        "$ref": "#/parameters/list-id"
-                    },
-                    {
-                        "name": "brand",
-                        "in": "query",
-                        "description": "Brand of items to return.",
+                        "name": "app-id",
+                        "in": "path",
+                        "description": "App ID",
                         "type": "string",
-                        "required": false
+                        "required": true
                     },
                     {
-                        "name": "count",
-                        "in": "query",
-                        "description": "Count of items to return.",
-                        "type": "integer",
-                        "required": false
+                        "name": "video-id",
+                        "in": "path",
+                        "description": "Video ID",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "UI or App-wrapped heterogenous list of results",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/AppPlayPage"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/AppErrorResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apps/{app-id}/pages/settings": {
+            "get": {
+                "tags": [
+                    "Apps"
+                ],
+                "description": "Get App-specific Settings page.",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/app-id"
                     }
                 ],
                 "responses": {
@@ -1064,9 +990,23 @@
                             "type": "object",
                             "properties": {
                                 "data": {
+                                    "type": "object",
+                                    "items": {
+                                        "$ref": "#/definitions/AppSettingsPage"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/definitions/List"
+                                        "$ref": "#/definitions/AppErrorResponse"
                                     }
                                 }
                             }
